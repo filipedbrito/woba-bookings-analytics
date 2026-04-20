@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: raw_bookings
+    tables:
+      - name: bookings
+      - name: spaces
+      - name: companies
+      - name: plans

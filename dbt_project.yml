@@ -1,0 +1,20 @@
+.name: 'woba_bookings_analytics'
+version: '1.0'
+config-version: 2
+
+profile: 'default'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+models:
+  woba_bookings_analytics:
+    bronze:
+      materialized: view
+
+    silver:
+      materialized: view
+
+    gold:
+      materialized: table
