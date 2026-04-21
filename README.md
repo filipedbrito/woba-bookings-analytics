@@ -8,19 +8,17 @@ Camada semântica para o domínio de bookings da Woba utilizando dbt, Athena e I
 
 O projeto segue o padrão medalhão:
 
-* bronze: dados brutos (sources)
-* silver: limpeza e padronização (staging)
-* gold: camada de consumo (dimensões, fato e modelo analítico)
+* bronze: limpeza e padronização (staging)
+* silver: camada dimensional (tabelas fato e dimensões, utilizada como fonte da verdade e também para consumo analítico mais flexível)
+* gold: camada de consumo (marts e modelos analíticos prontos para uso)
 
-A camada gold é modelada em Star Schema.
-
-Neste projeto, bronze foi tratado como source, silver como staging e gold como camada de consumo.
+A camada silver é modelada em Star Schema.
 
 ---
 
 # Parte 1 — Modelagem Dimensional
 
-A modelagem segue o padrão **Star Schema**, com uma tabela fato central (`fact_bookings`) e dimensões associadas.
+A modelagem na camada silver - assumida como fonte da verdade - segue o padrão **Star Schema**, com uma tabela fato central (`fact_bookings`) e dimensões associadas.
 
 ![diagram_model](assets/diagram_model.png)
 
@@ -118,7 +116,7 @@ Para completar o modelo, eu buscaria:
 ### Abordagem
 
 * alinhamento com produto para entendimento das regras de negócio
-* alinhamento com engenharia de software para entender origem e lifecycle dos dados
+* alinhamento com engenharia de software para entender origem e ciclo de vida dos dados
 * validação com stakeholders de dados para definição de métricas
 * análise exploratória das tabelas brutas
 
@@ -232,7 +230,7 @@ Em produção, essa execução seria orquestrada via Airflow, onde falhas interr
 
 ### Macro
 
-Foi criada uma macro para controle de carga incremental baseada em timestamp, reutilizada em modelos incrementais para reduzir custo de leitura no Athena.
+Foi criada uma macro para controle de carga incremental baseada em timestamp, que poderia ser reutilizada em outros modelos incrementais para reduzir custo de leitura no Athena.
 
 ---
 
@@ -242,7 +240,7 @@ Foi criada uma macro para controle de carga incremental baseada em timestamp, re
 
 #### Abordagem
 
-Antes de construir o dashboard, o primeiro passo é estruturar melhor a demanda:
+Antes de construir o dashboard, o primeiro passo é estruturar melhor o entregável esperado a partir de perguntas ao stackholder:
 
 * qual o objetivo principal (operacional vs estratégico)?
 * quem são os usuários consumidores (ops, financeiro, parceiros)?
@@ -281,7 +279,7 @@ Métricas relevantes:
 * créditos consumidos por espaço
 * receita estimada por espaço
 * taxa de cancelamento
-* no-show rate
+* taxa de no-show
 * utilização por plano
 
 ---
