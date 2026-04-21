@@ -22,7 +22,7 @@ Obs: A separação entre bronze/silver/gold pode variar entre organizações. Ne
 
 A modelagem segue o padrão **Star Schema**, com uma tabela fato central (`fact_bookings`) e dimensões associadas.
 
-![modelagem\_dimensional](modelagem_dimensional.png)
+![modelagem_dimensional](modelagem_dimensional.png)
 
 ### Grain
 
@@ -34,13 +34,15 @@ A modelagem segue o padrão **Star Schema**, com uma tabela fato central (`fact_
 
 #### Fato
 
-* `fact_bookings`
+* `fact_bookings`  
   Representa cada reserva realizada.
 
 Principais chaves:
 
 * booking_id (degenerate dimension)
 * space_id, company_id, user_id, plan_id
+
+Obs: `user_id` é mantido diretamente na fato como **degenerate dimension**, sem dimensão dedicada.
 
 ---
 
@@ -54,7 +56,6 @@ Principais chaves:
 
 **Inferidas (a partir do schema):**
 
-* `dim_users` → suporte a análise comportamental e recomendação
 * `dim_booking_status` → domínio controlado a partir de `status_id`
 * `dim_booking_type` → categorização de reservas
 * `dim_date` → suporte a agregações temporais
@@ -64,8 +65,14 @@ Principais chaves:
 ### Decisões de modelagem
 
 * **Star Schema**: simplifica consumo em BI e reduz complexidade de joins
-* **Degenerate dimension**: `booking_id` mantido na fato para rastreabilidade
+* **Degenerate dimension**: `booking_id` e `user_id` mantidos na fato para rastreabilidade e simplicidade
 * **Relacionamentos**: modelo estruturado em relações 1:N entre dimensões e fato
+
+#### Star Schema vs OBT
+
+O modelo foi construído em Star Schema para atender à proposta do case.
+
+Na prática, uma abordagem em OBT costuma ser mais eficiente e simples para consumo, pois evita múltiplos joins (reduzindo custo de processamento) e facilita o uso por usuários finais ao concentrar os dados em uma única tabela. Há um aumento no uso de armazenamento, porém, via de regra, esse custo é inferior ao custo de processamento gerado por múltiplos joins.
 
 #### Estratégia de SCD
 
@@ -79,9 +86,6 @@ Planos impactam diretamente créditos e regras de uso.
 
 * `dim_companies` → **SCD Type 1 (evolutivo)**  
 Pode evoluir para SCD2 caso atributos como porte da empresa sejam relevantes.
-
-* `dim_users` → **SCD Type 1 (com possibilidade de SCD2)**  
-Suporte a análise comportamental e produto.
 
 * `dim_booking_status` e `dim_booking_type` → **SCD Type 0**  
 Domínios estáticos.
@@ -141,7 +145,8 @@ Para suportar casos como recomendação de espaços:
 Impactos na modelagem:
 
 * preservação do nível transacional na fato
-* inclusão de dimensões como `dim_users`
+* uso de `user_id` diretamente na fato (degenerate dimension)
+* possibilidade de evolução para uma dimensão de usuários caso atributos adicionais estejam disponíveis
 * possibilidade de evolução para dados mais granulares (eventos)
 
 ---

@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: stg_companies
+    description: >
+      Tabela de staging responsável pela padronização e limpeza dos dados de empresas
+      provenientes da fonte raw. Contém informações cadastrais e atributos de segmentação
+      das empresas associadas aos usuários e reservas.
+
+    meta:
+      domain: companies
+      layer: bronze
+      contains_pii: false
+      owner: data_team
+
+    columns:
+      - name: company_id
+        description: Identificador único da empresa.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: company_name
+        description: Nome da empresa.
+        meta:
+          pii: false
+          sensitive: business_information
+
+      - name: industry
+        description: Segmento ou indústria em que a empresa atua.
+        meta:
+          pii: false
+
+      - name: employee_count
+        description: Quantidade de funcionários da empresa.
+        meta:
+          pii: false
+
+      - name: created_at
+        description: Data e hora de criação do registro da empresa.
+        meta:
+          pii: false

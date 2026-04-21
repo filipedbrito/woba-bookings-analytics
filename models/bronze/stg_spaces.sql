@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('bronze', 'spaces') }}
+    select * from {{ source('raw', 'spaces') }}
 )
 
 , final as (

@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: dim_spaces
+    description: >
+      Dimensão que representa os espaços disponíveis para reserva na plataforma.
+      Contém atributos descritivos e operacionais utilizados para análise de uso,
+      capacidade e segmentação dos espaços.
+
+    meta:
+      domain: spaces
+      layer: silver
+      owner: data_team
+      contains_pii: false
+      dimension_type: slowly_changing_dimension
+      scd_type: type_1
+
+    columns:
+      - name: space_id
+        description: Identificador único do espaço.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: space_name
+        description: Nome do espaço disponível para reserva.
+        meta:
+          pii: false
+          sensitive: business_information
+
+      - name: category
+        description: Categoria do espaço (ex: escritório, sala de reunião, coworking).
+        meta:
+          pii: false
+
+      - name: tier
+        description: Classificação do espaço (ex: básico, premium).
+        meta:
+          pii: false
+
+      - name: total_seats
+        description: Capacidade total de assentos disponíveis no espaço.
+        meta:
+          pii: false
+
+      - name: updated_at
+        description: Timestamp da última atualização do registro na dimensão.
+        meta:
+          pii: false

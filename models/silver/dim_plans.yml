@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: dim_plans
+    description: >
+      Dimensão que representa os planos ofertados pela plataforma.
+      Contém atributos descritivos e financeiros utilizados para análise
+      de consumo, segmentação e monetização.
+
+    meta:
+      domain: plans
+      layer: silver
+      owner: data_team
+      contains_pii: false
+      dimension_type: slowly_changing_dimension
+      scd_type: type_1
+
+    columns:
+      - name: plan_id
+        description: Identificador único do plano.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: plan_name
+        description: Nome do plano ofertado.
+        meta:
+          pii: false
+          sensitive: business_information
+
+      - name: plan_type
+        description: Tipo do plano (ex: mensal, anual, corporativo).
+        meta:
+          pii: false
+
+      - name: monthly_credits
+        description: Quantidade de créditos mensais disponíveis no plano.
+        meta:
+          pii: false
+
+      - name: plan_value
+        description: Valor monetário do plano.
+        meta:
+          pii: false
+          sensitive: financial

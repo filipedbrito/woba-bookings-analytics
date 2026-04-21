@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: stg_bookings
+    description: >
+      Tabela de staging responsável pela padronização e limpeza dos dados de reservas (bookings)
+      provenientes da fonte raw. Contém informações sobre reservas realizadas por usuários em espaços,
+      incluindo status, créditos utilizados e timestamps relevantes.
+
+    meta:
+      domain: bookings
+      layer: bronze
+      contains_pii: true
+      owner: data_team
+
+    columns:
+      - name: booking_id
+        description: Identificador único da reserva.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: space_id
+        description: Identificador do espaço reservado.
+        meta:
+          pii: false
+
+      - name: user_id
+        description: Identificador do usuário que realizou a reserva.
+        meta:
+          pii: true
+          pii_type: indirect_identifier
+
+      - name: company_id
+        description: Identificador da empresa associada ao usuário.
+        meta:
+          pii: false
+
+      - name: plan_id
+        description: Identificador do plano utilizado na reserva.
+        meta:
+          pii: false
+
+      - name: booking_type_id
+        description: Tipo da reserva (ex: avulsa, recorrente).
+        meta:
+          pii: false
+
+      - name: status_id
+        description: Status atual da reserva.
+        meta:
+          pii: false
+
+      - name: credits
+        description: Quantidade de créditos utilizados na reserva.
+        meta:
+          pii: false
+
+      - name: credits_in_money
+        description: Valor monetário equivalente aos créditos utilizados.
+        meta:
+          pii: false
+
+      - name: check_in_datetime
+        description: Data e hora de início da reserva.
+        meta:
+          pii: false
+
+      - name: check_out_datetime
+        description: Data e hora de término da reserva.
+        meta:
+          pii: false
+
+      - name: is_cancelled
+        description: Indica se a reserva foi cancelada.
+        meta:
+          pii: false
+
+      - name: is_no_show
+        description: Indica se o usuário não compareceu à reserva.
+        meta:
+          pii: false
+
+      - name: created_at
+        description: Data e hora de criação da reserva no sistema.
+        meta:
+          pii: false

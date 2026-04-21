@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: dim_booking_type
+    description: >
+      Dimensão responsável por mapear os tipos de reservas (bookings).
+      Converte identificadores numéricos em categorias compreensíveis,
+      facilitando análises sobre o comportamento de agendamento.
+
+    meta:
+      domain: bookings
+      layer: silver
+      owner: data_team
+      contains_pii: false
+      dimension_type: static
+
+    columns:
+      - name: booking_type_id
+        description: Identificador único do tipo de reserva.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: booking_type_name
+        description: >
+          Descrição do tipo de reserva (ex: on_demand, scheduled, recurring).
+        meta:
+          pii: false

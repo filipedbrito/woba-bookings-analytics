@@ -1,0 +1,103 @@
+version: 2
+
+models:
+  - name: fact_bookings
+    description: >
+      Tabela fato que representa as reservas realizadas na plataforma.
+      Cada linha corresponde a uma reserva (booking), contendo chaves
+      para dimensões associadas e métricas relacionadas ao uso de créditos.
+
+    meta:
+      domain: bookings
+      layer: silver
+      owner: data_team
+      contains_pii: true
+      fact_granularity: one_row_per_booking
+
+    columns:
+      - name: booking_id
+        description: Identificador único da reserva.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: space_id
+        description: Identificador do espaço reservado.
+        tests:
+          - relationships:
+              to: ref('dim_spaces')
+              field: space_id
+        meta:
+          pii: false
+
+      - name: company_id
+        description: Identificador da empresa associada à reserva.
+        tests:
+          - relationships:
+              to: ref('dim_companies')
+              field: company_id
+        meta:
+          pii: false
+
+      - name: user_id
+        description: Identificador do usuário que realizou a reserva.
+        meta:
+          pii: true
+          pii_type: indirect_identifier
+
+      - name: plan_id
+        description: Identificador do plano utilizado na reserva.
+        tests:
+          - relationships:
+              to: ref('dim_plans')
+              field: plan_id
+        meta:
+          pii: false
+
+      - name: booking_type_id
+        description: Identificador do tipo de reserva.
+        tests:
+          - relationships:
+              to: ref('dim_booking_type')
+              field: booking_type_id
+        meta:
+          pii: false
+
+      - name: status_id
+        description: Identificador do status da reserva.
+        tests:
+          - relationships:
+              to: ref('dim_booking_status')
+              field: status_id
+        meta:
+          pii: false
+
+      - name: credits
+        description: Quantidade de créditos utilizados na reserva.
+        meta:
+          pii: false
+          metric: true
+
+      - name: credits_in_money
+        description: Valor monetário equivalente aos créditos utilizados.
+        meta:
+          pii: false
+          metric: true
+          sensitive: financial
+
+      - name: check_in_datetime
+        description: Data e hora de início da reserva.
+        meta:
+          pii: false
+
+      - name: check_out_datetime
+        description: Data e hora de término da reserva.
+        meta:
+          pii: false
+
+      - name: created_at
+        description: Data e hora de criação da reserva.
+        meta:
+          pii: false

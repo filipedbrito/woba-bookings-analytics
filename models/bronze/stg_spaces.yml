@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: stg_spaces
+    description: >
+      Tabela de staging responsável pela padronização e limpeza dos dados de espaços
+      provenientes da fonte raw. Contém informações sobre os espaços disponíveis para reserva,
+      incluindo categoria, nível (tier) e capacidade.
+
+    meta:
+      domain: spaces
+      layer: bronze
+      contains_pii: false
+      owner: data_team
+
+    columns:
+      - name: space_id
+        description: Identificador único do espaço.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: space_name
+        description: Nome do espaço disponível para reserva.
+        meta:
+          pii: false
+          sensitive: business_information
+
+      - name: category
+        description: Categoria do espaço (ex: escritório, sala de reunião, coworking).
+        meta:
+          pii: false
+
+      - name: tier
+        description: Nível ou classificação do espaço (ex: básico, premium).
+        meta:
+          pii: false
+
+      - name: total_seats
+        description: Capacidade total de assentos disponíveis no espaço.
+        meta:
+          pii: false
+
+      - name: created_at
+        description: Data e hora de criação do espaço no sistema.
+        meta:
+          pii: false

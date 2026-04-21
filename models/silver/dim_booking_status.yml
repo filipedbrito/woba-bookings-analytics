@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: dim_booking_status
+    description: >
+      Dimensão responsável por mapear os status das reservas (bookings).
+      Traduz códigos numéricos em descrições legíveis, facilitando análises
+      e interpretação dos dados de reservas.
+
+    meta:
+      domain: bookings
+      layer: silver
+      owner: data_team
+      contains_pii: false
+      dimension_type: static
+
+    columns:
+      - name: status_id
+        description: Identificador único do status da reserva.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: status_name
+        description: Descrição textual do status da reserva (ex: scheduled, confirmed, cancelled, no_show).
+        meta:
+          pii: false

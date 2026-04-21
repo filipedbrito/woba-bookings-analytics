@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: dim_dates
+    description: >
+      Dimensão de datas utilizada para suportar análises temporais no modelo.
+      Contém uma linha por dia, com atributos derivados que permitem agregações
+      por diferentes granularidades (dia, semana, mês, trimestre, ano) e análises
+      de comportamento ao longo do tempo.
+
+    tags: ['static']
+
+    meta:
+      domain: shared
+      layer: silver
+      owner: data_team
+      contains_pii: false
+      dimension_type: static
+      is_date_dimension: true
+
+    columns:
+      - name: date
+        description: Data no formato YYYY-MM-DD.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: year
+        description: Ano da data.
+        meta:
+          pii: false
+
+      - name: month
+        description: Mês da data (1-12).
+        meta:
+          pii: false
+
+      - name: day
+        description: Dia do mês (1-31).
+        meta:
+          pii: false
+
+      - name: week_of_year
+        description: Semana do ano.
+        meta:
+          pii: false
+
+      - name: quarter
+        description: Trimestre do ano (1-4).
+        meta:
+          pii: false
+
+      - name: day_of_week
+        description: Dia da semana (1-7).
+        meta:
+          pii: false
+
+      - name: is_weekend
+        description: Indica se a data corresponde a um final de semana.
+        meta:
+          pii: false
+
+      - name: month_start
+        description: Primeiro dia do mês da data.
+        meta:
+          pii: false
+
+      - name: month_end
+        description: Último dia do mês da data.
+        meta:
+          pii: false
+
+      - name: is_month_start
+        description: Indica se a data é o primeiro dia do mês.
+        meta:
+          pii: false
+
+      - name: is_month_end
+        description: Indica se a data é o último dia do mês.
+        meta:
+          pii: false

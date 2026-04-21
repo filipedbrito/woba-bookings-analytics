@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: mart_credit_usage
+    description: >
+      Data mart responsável por analisar a utilização de créditos por empresa e plano
+      nos últimos 3 meses. Permite avaliar o nível de consumo dos créditos contratados,
+      identificando padrões de uso e possíveis oportunidades de otimização ou upsell.
+
+    meta:
+      domain: bookings
+      layer: gold
+      owner: data_team
+      contains_pii: false
+      metric_model: true
+
+    columns:
+      - name: company_id
+        description: Identificador da empresa.
+        tests:
+          - not_null
+        meta:
+          pii: false
+
+      - name: plan_id
+        description: Identificador do plano associado ao consumo.
+        tests:
+          - not_null
+        meta:
+          pii: false
+
+      - name: total_credits_used
+        description: Total de créditos consumidos pela empresa no período de análise (últimos 3 meses).
+        meta:
+          pii: false
+          metric: true
+
+      - name: monthly_credits
+        description: Quantidade de créditos mensais disponíveis no plano.
+        meta:
+          pii: false
+
+      - name: usage_rate
+        description: >
+          Taxa de utilização dos créditos, calculada como a razão entre créditos utilizados
+          e créditos mensais do plano.
+        meta:
+          pii: false
+          metric: true
+          calculation: total_credits_used / monthly_credits
+
+      - name: overall_avg
+        description: >
+          Média geral da taxa de utilização de créditos considerando todas as empresas e planos.
+          Utilizada como benchmark para comparação.
+        meta:
+          pii: false
+          metric: true

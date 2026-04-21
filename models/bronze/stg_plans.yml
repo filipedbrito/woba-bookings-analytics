@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: stg_plans
+    description: >
+      Tabela de staging responsável pela padronização e limpeza dos dados de planos
+      provenientes da fonte raw. Contém informações sobre os planos ofertados,
+      incluindo tipo, quantidade de créditos mensais e valor associado.
+
+    meta:
+      domain: plans
+      layer: bronze
+      contains_pii: false
+      owner: data_team
+
+    columns:
+      - name: plan_id
+        description: Identificador único do plano.
+        tests:
+          - not_null
+          - unique
+        meta:
+          pii: false
+
+      - name: plan_name
+        description: Nome do plano ofertado.
+        meta:
+          pii: false
+          sensitive: business_information
+
+      - name: plan_type
+        description: Tipo do plano (ex: mensal, anual, corporativo).
+        meta:
+          pii: false
+
+      - name: monthly_credits
+        description: Quantidade de créditos disponibilizados mensalmente no plano.
+        meta:
+          pii: false
+
+      - name: plan_value
+        description: Valor monetário do plano.
+        meta:
+          pii: false
+          sensitive: financial
+
+      - name: created_at
+        description: Data e hora de criação do plano no sistema.
+        meta:
+          pii: false
