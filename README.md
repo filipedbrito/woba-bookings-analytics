@@ -188,6 +188,18 @@ credits utilizados / créditos disponíveis no plano
 
 ---
 
+### Script Python
+
+Script simples para consumir o output da query analítica.
+
+* lê o resultado (CSV)
+* filtra empresas com usage_rate < 30%
+* gera um CSV com candidatos a churn
+
+Simula consumo downstream fora do BI.
+
+---
+
 ### Testes
 
 Foram implementados testes de qualidade de dados em dois níveis:

@@ -20,15 +20,16 @@ with base as (
 , plans as (
     select
         plan_id
+    ,   plan_type
     ,   monthly_credits
     from {{ ref('dim_plans') }}
 )
-
 
 , final as (
     select
         a.company_id
     ,   a.plan_id
+    ,   p.plan_type
     ,   a.total_credits_used
     ,   p.monthly_credits
     ,   a.total_credits_used / p.monthly_credits as usage_rate
@@ -36,5 +37,3 @@ with base as (
     from agg a
     left join plans p using (plan_id)
 )
-
-select * from final

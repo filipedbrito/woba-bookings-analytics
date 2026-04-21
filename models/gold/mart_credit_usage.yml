@@ -29,6 +29,11 @@ models:
         meta:
           pii: false
 
+      - name: plan_type
+        description: Tipo do plano (ex: mensal, anual, corporativo).
+        meta:
+          pii: false
+
       - name: total_credits_used
         description: Total de créditos consumidos pela empresa no período de análise (últimos 3 meses).
         meta:
