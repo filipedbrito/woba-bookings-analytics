@@ -231,14 +231,108 @@ Foi criada uma macro para controle de carga incremental baseada em timestamp, re
 
 ---
 
-## Parte 3 — Dados como Produto
+## Parte 3 — Colaboração e Dados como Produto
 
-xxxxxxxxxxx
+### Cenário A — Demanda ambígua
+
+#### Abordagem
+
+Antes de construir o dashboard, é necessário estruturar melhor a demanda:
+
+* qual o objetivo principal (operacional vs estratégico)?
+* quem são os usuários consumidores (ops, financeiro, parceiros)?
+* qual o nível de granularidade esperado (espaço, cidade, parceiro)?
+* qual a definição de “performance” (ocupação, receita, utilização, retenção)?
+* qual a frequência de atualização necessária?
+* existem regras de negócio relevantes (cancelamentos, no-show, etc.)?
+
+#### Riscos
+
+* métricas mal definidas gerando interpretações erradas
+* desalinhamento entre áreas (ex: produto vs operações)
+* uso de dados inconsistentes (falta de definição única de métricas)
+* necessidade de retrabalho por falta de escopo claro
+
+#### Datasets e métricas
+
+Datasets principais:
+
+* `fact_bookings`
+* `dim_spaces`
+* `dim_companies`
+* `dim_plans`
+* `dim_dates`
+
+Possíveis marts:
+
+* `mart_space_performance`
+* `mart_company_usage`
+
+Métricas relevantes:
+
+* taxa de ocupação (check-ins / capacidade)
+* créditos consumidos por espaço
+* receita estimada por espaço
+* taxa de cancelamento
+* no-show rate
+* utilização por plano
+
+#### Confiabilidade e atualização
+
+* uso de testes no dbt (not_null, relationships, regras de negócio)
+* definição clara de métricas na camada gold
+* materialização incremental para eficiência
+* orquestração via Airflow com monitoramento de falhas
+* versionamento e documentação via dbt
 
 ---
 
-## Parte 4 — Bônus
+### Cenário B — Dados para Produto / IA
 
-xxxxxxxxxxx
+#### Estruturação dos dados
 
----
+Para suportar produto (e não apenas BI), o modelo precisa evoluir para:
+
+* granularidade por usuário (comportamento individual)
+* histórico completo de interações (não apenas bookings agregados)
+* possibilidade de feature engineering (frequência, preferências, localização)
+
+Impactos na modelagem:
+
+* manutenção da fato no nível transacional
+* uso de `user_id` como chave analítica
+* possibilidade de criação de datasets derivados para features (ex: frequência de uso, espaços mais utilizados)
+
+#### Data contracts
+
+Definição de contratos entre dados e produto:
+
+* schema estável (colunas e tipos definidos)
+* definição clara de métricas (ex: usage_rate)
+* SLA de atualização (ex: diário)
+* versionamento de mudanças (evitar breaking changes)
+* documentação acessível via dbt
+
+#### Batch vs Near Real-Time
+
+Trade-off:
+
+* batch:
+  * mais simples
+  * menor custo
+  * suficiente para a maioria dos casos analíticos
+
+* near real-time:
+  * maior complexidade
+  * maior custo
+  * necessário para recomendações em tempo quase real
+
+Abordagem:
+
+* iniciar com batch (ex: diário)
+* evoluir para near real-time apenas se houver necessidade clara do produto
+
+Impacto na arquitetura:
+
+* batch → dbt + Athena + Airflow
+* near real-time → necessidade de streaming/eventos (ex: Kafka, CDC, etc.)
