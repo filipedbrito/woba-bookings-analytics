@@ -1,6 +1,6 @@
 # woba-bookings-analytics
 
-Camada semântica para o domínio de bookings da Woba utilizando dbt, Athena e Iceberg. Foco em modelagem dimensional e suporte a consumo em BI e produtos de dados.
+Camada semântica para o domínio de bookings da Woba utilizando dbt, Athena e Iceberg, com foco em modelagem dimensional e suporte a consumo em BI e produtos de dados.
 
 ---
 
@@ -72,7 +72,9 @@ Obs: `user_id` é mantido diretamente na fato como **degenerate dimension**, sem
 
 O modelo foi construído em Star Schema para atender à proposta do case.
 
-Na prática, uma abordagem em OBT costuma ser mais eficiente e simples para consumo, pois evita múltiplos joins (reduzindo custo de processamento) e facilita o uso por usuários finais ao concentrar os dados em uma única tabela. Há um aumento no uso de armazenamento, porém, via de regra, esse custo é inferior ao custo de processamento gerado por múltiplos joins.
+Na prática, uma abordagem em OBT tende a ser mais eficiente e simples para consumo, pois evita múltiplos joins (reduzindo custo de processamento) e facilita o uso por usuários finais ao concentrar os dados em uma única tabela. Em contrapartida, há aumento no uso de armazenamento, que geralmente é menos crítico do que o custo de processamento.
+
+---
 
 #### Estratégia de SCD
 
@@ -93,9 +95,11 @@ Domínios estáticos.
 * `dim_date` → **Tabela estática (sem SCD)**  
 Calendário gerado previamente, sem necessidade de controle de histórico.
 
+---
+
 #### Observações de modelagem
 
-Algumas dimensões (como status e tipo de booking) foram inferidas a partir do contexto. Em um cenário real, validaria essas definições com o time de produto.
+Algumas dimensões (como status e tipo de booking) foram inferidas a partir do contexto. Em um cenário real, essas definições seriam validadas com o time de produto.
 
 A dimensão de datas é tratada como tabela estática (tag `static`), sendo atualizada apenas sob demanda.
 
@@ -124,7 +128,7 @@ Para completar o modelo, eu buscaria:
 
 ### BI
 
-O modelo foi pensado para facilitar consumo em BI, principalmente para:
+O modelo foi pensado para facilitar o consumo em BI, principalmente para:
 
 * agregações por empresa, plano e período
 * definição consistente de métricas
@@ -156,11 +160,14 @@ O projeto foi estruturado em dbt com:
 * organização por camadas (bronze, silver, gold)
 * uso de `source()` para dados brutos e `ref()` para dependências
 * materializações:
-
   * view para staging (silver)
   * table para dimensões
   * incremental com merge para fatos
 * uso de Iceberg para suportar operações de merge
+
+Embora o dbt permita a centralização em um único `schema.yml`, optei por definir testes e documentação junto a cada modelo (`model_name.yml`), o que facilita navegação, manutenção e evolução do projeto.
+
+---
 
 ### Estratégia incremental
 
@@ -305,15 +312,17 @@ Impactos na modelagem:
 * uso de `user_id` como chave analítica
 * possibilidade de criação de datasets derivados para features (ex: frequência de uso, espaços mais utilizados)
 
-#### Data contracts
+---
 
-Definição de contratos entre dados e produto:
+#### Data contracts
 
 * schema estável (colunas e tipos definidos)
 * definição clara de métricas (ex: usage_rate)
 * SLA de atualização (ex: diário)
 * versionamento de mudanças (evitar breaking changes)
 * documentação acessível via dbt
+
+---
 
 #### Batch vs Near Real-Time
 
@@ -329,14 +338,10 @@ Trade-off:
   * maior custo
   * necessário para recomendações em tempo quase real
 
----
-
 Abordagem:
 
 * iniciar com batch (ex: diário)
 * evoluir para near real-time apenas se houver necessidade clara do produto
-
----
 
 Impacto na arquitetura:
 
@@ -420,7 +425,7 @@ Executado após merge na branch principal:
 
 ### Boas práticas
 
-* uso de branchs para isolamento de desenvolvimento
+* uso de branches para isolamento de desenvolvimento
 * PR obrigatório com validação automática (CI)
 * falhas no CI bloqueiam o merge
 * logs centralizados para análise de falhas
