@@ -1,6 +1,6 @@
 # woba-bookings-analytics
 
-Camada semântica para o domínio de bookings da Woba utilizando dbt, Athena e Iceberg. Foco em modelagem dimensional, qualidade analítica e suporte a BI e produtos de dados.
+Camada semântica para o domínio de bookings da Woba utilizando dbt, Athena e Iceberg. Foco em modelagem dimensional e suporte a consumo em BI e produtos de dados.
 
 ---
 
@@ -14,7 +14,7 @@ O projeto segue o padrão medalhão:
 
 A camada gold é modelada em Star Schema.
 
-Obs: A separação entre bronze/silver/gold pode variar entre organizações. Neste projeto, bronze foi tratado como source, silver como staging e gold como camada de consumo.
+Neste projeto, bronze foi tratado como source, silver como staging e gold como camada de consumo.
 
 ---
 
@@ -35,7 +35,7 @@ A modelagem segue o padrão **Star Schema**, com uma tabela fato central (`fact_
 #### Fato
 
 * `fact_bookings`  
-  Representa cada reserva realizada.
+  Cada linha representa uma reserva (booking).
 
 Principais chaves:
 
@@ -95,9 +95,7 @@ Calendário gerado previamente, sem necessidade de controle de histórico.
 
 #### Observações de modelagem
 
-Algumas dimensões inferidas (como status e tipo de booking) utilizam mapeamentos hipotéticos para enriquecimento semântico.
-
-Esses valores foram definidos via `case when` com base em interpretação do domínio e devem ser validados com o time de produto antes de uso em produção.
+Algumas dimensões (como status e tipo de booking) foram inferidas a partir do contexto. Em um cenário real, validaria essas definições com o time de produto.
 
 A dimensão de datas é tratada como tabela estática (tag `static`), sendo atualizada apenas sob demanda.
 
@@ -105,7 +103,7 @@ A dimensão de datas é tratada como tabela estática (tag `static`), sendo atua
 
 ## Dados faltantes e como seriam obtidos
 
-Para completar o modelo, seria necessário:
+Para completar o modelo, eu buscaria:
 
 * tabela de usuários (`users`)
 * definição dos status de booking
@@ -126,7 +124,7 @@ Para completar o modelo, seria necessário:
 
 ### BI
 
-A modelagem em Star Schema facilita:
+O modelo foi pensado para facilitar consumo em BI, principalmente para:
 
 * agregações por empresa, plano e período
 * definição consistente de métricas
@@ -136,7 +134,7 @@ A modelagem em Star Schema facilita:
 
 ### Produto / IA
 
-Para suportar casos como recomendação de espaços:
+Pensando em casos como recomendação de espaços:
 
 * necessidade de granularidade por usuário
 * uso de histórico para entendimento de comportamento
@@ -153,7 +151,7 @@ Impactos na modelagem:
 
 ## Parte 2 — Implementação com dbt
 
-O projeto foi estruturado com dbt considerando:
+O projeto foi estruturado em dbt com:
 
 * organização por camadas (bronze, silver, gold)
 * uso de `source()` para dados brutos e `ref()` para dependências
@@ -178,7 +176,7 @@ A carga incremental é controlada via timestamp (`created_at`), reduzindo leitur
 
 ### Query analítica
 
-Foi desenvolvido um modelo para responder:
+Modelo desenvolvido para responder:
 
 "Qual a taxa de utilização de créditos por empresa nos últimos 3 meses, segmentada por plano, e como se compara com a média geral?"
 
@@ -237,7 +235,7 @@ Foi criada uma macro para controle de carga incremental baseada em timestamp, re
 
 #### Abordagem
 
-Antes de construir o dashboard, é necessário estruturar melhor a demanda:
+Antes de construir o dashboard, o primeiro passo é estruturar melhor a demanda:
 
 * qual o objetivo principal (operacional vs estratégico)?
 * quem são os usuários consumidores (ops, financeiro, parceiros)?
@@ -347,9 +345,9 @@ Impacto na arquitetura:
 
 ### Pipeline de observabilidade
 
-![diagram_model](assets/diagram_observability.png)
+![diagram_observability](assets/diagram_observability.png)
 
-A observabilidade é tratada como uma camada transversal ao pipeline, cobrindo desde a ingestão até a validação dos dados.
+A observabilidade foi tratada como uma camada transversal ao pipeline, cobrindo desde a ingestão até a validação dos dados.
 
 Principais pontos monitorados:
 
