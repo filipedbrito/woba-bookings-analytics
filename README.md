@@ -22,7 +22,7 @@ Obs: A separação entre bronze/silver/gold pode variar entre organizações. Ne
 
 A modelagem segue o padrão **Star Schema**, com uma tabela fato central (`fact_bookings`) e dimensões associadas.
 
-![modelagem_dimensional](modelagem_dimensional.png)
+![diagram_model](assets/diagram_model.png)
 
 ### Grain
 
@@ -253,6 +253,8 @@ Antes de construir o dashboard, é necessário estruturar melhor a demanda:
 * uso de dados inconsistentes (falta de definição única de métricas)
 * necessidade de retrabalho por falta de escopo claro
 
+---
+
 #### Datasets e métricas
 
 Datasets principais:
@@ -276,6 +278,8 @@ Métricas relevantes:
 * taxa de cancelamento
 * no-show rate
 * utilização por plano
+
+---
 
 #### Confiabilidade e atualização
 
@@ -336,3 +340,49 @@ Impacto na arquitetura:
 
 * batch → dbt + Athena + Airflow
 * near real-time → necessidade de streaming/eventos (ex: Kafka, CDC, etc.)
+
+---
+
+## Parte 4 — Observabilidade
+
+### Pipeline de observabilidade
+
+![diagram_model](assets/diagram_observability.png)
+
+A observabilidade é tratada como uma camada transversal ao pipeline, cobrindo desde a ingestão até a validação dos dados.
+
+Principais pontos monitorados:
+
+* **Freshness**  
+  Verificação de atraso na atualização dos dados nas fontes.
+
+* **Volume**  
+  Monitoramento de variações no volume de registros ao longo do pipeline.
+
+* **Schema changes**  
+  Detecção de alterações em colunas ou tipos de dados.
+
+* **Test failures**  
+  Falhas em testes dbt (qualidade e regras de negócio).
+
+---
+
+### Execução
+
+* pipeline orquestrado via Airflow
+* execução de `dbt build` (models + tests)
+* monitoramento da execução e dos testes
+
+---
+
+### Alertas
+
+* falhas críticas → alerta imediato (Slack)
+* variações de volume ou freshness → alertas configuráveis
+* mudanças de schema → notificação para investigação
+
+---
+
+### Objetivo
+
+Garantir confiabilidade dos dados ao longo de todo o pipeline antes do consumo em BI e aplicações downstream.
