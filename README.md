@@ -18,7 +18,7 @@ Neste projeto, bronze foi tratado como source, silver como staging e gold como c
 
 ---
 
-## Parte 1 — Modelagem Dimensional
+# Parte 1 — Modelagem Dimensional
 
 A modelagem segue o padrão **Star Schema**, com uma tabela fato central (`fact_bookings`) e dimensões associadas.
 
@@ -149,7 +149,7 @@ Impactos na modelagem:
 
 ---
 
-## Parte 2 — Implementação com dbt
+# Parte 2 — Implementação com dbt
 
 O projeto foi estruturado em dbt com:
 
@@ -229,7 +229,7 @@ Foi criada uma macro para controle de carga incremental baseada em timestamp, re
 
 ---
 
-## Parte 3 — Colaboração e Dados como Produto
+# Parte 3 — Colaboração e Dados como Produto
 
 ### Cenário A — Demanda ambígua
 
@@ -329,10 +329,14 @@ Trade-off:
   * maior custo
   * necessário para recomendações em tempo quase real
 
+---
+
 Abordagem:
 
 * iniciar com batch (ex: diário)
 * evoluir para near real-time apenas se houver necessidade clara do produto
+
+---
 
 Impacto na arquitetura:
 
@@ -341,9 +345,9 @@ Impacto na arquitetura:
 
 ---
 
-## Parte 4 — Observabilidade
+# Parte 4
 
-### Pipeline de observabilidade
+## Pipeline de observabilidade
 
 ![diagram_observability](assets/diagram_observability.png)
 
@@ -379,8 +383,50 @@ Principais pontos monitorados:
 * variações de volume ou freshness → alertas configuráveis
 * mudanças de schema → notificação para investigação
 
+Os alertas são direcionados inicialmente para o Analytics Engineer responsável pelo pipeline, que atua como ponto de triagem e direcionamento quando necessário.
+
 ---
 
-### Objetivo
+## Estratégia de CI/CD
 
-Garantir confiabilidade dos dados ao longo de todo o pipeline antes do consumo em BI e aplicações downstream.
+O fluxo de CI/CD foi pensado para garantir qualidade antes do deploy e evitar quebra de pipelines em produção.
+
+---
+
+### CI (Continuous Integration)
+
+Executado a cada Pull Request:
+
+* validação de lint (SQL + YAML)
+* `dbt parse` para verificar integridade do projeto
+* `dbt build --select state:modified+` para testar apenas modelos alterados
+* execução de testes (not_null, relationships, regras de negócio)
+
+Objetivo:
+
+* evitar que código inválido ou modelos quebrados sejam mergeados
+
+---
+
+### CD (Continuous Deployment)
+
+Executado após merge na branch principal:
+
+* execução do pipeline completo (`dbt build`)
+* atualização das tabelas no Athena (Iceberg)
+* execução orquestrada via Airflow
+
+---
+
+### Boas práticas
+
+* uso de branchs para isolamento de desenvolvimento
+* PR obrigatório com validação automática (CI)
+* falhas no CI bloqueiam o merge
+* logs centralizados para análise de falhas
+
+---
+
+### Observação
+
+O deploy não depende de instâncias dedicadas (ex: EC2), podendo ser executado via runners (GitHub Actions) ou orquestrado diretamente pelo Airflow, dependendo da arquitetura adotada.
