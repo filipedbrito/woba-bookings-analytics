@@ -430,3 +430,13 @@ Executado após merge na branch principal:
 ### Observação
 
 O deploy não depende de instâncias dedicadas (ex: EC2), podendo ser executado via runners (GitHub Actions) ou orquestrado diretamente pelo Airflow, dependendo da arquitetura adotada.
+
+---
+
+# Uso de IA
+
+Utilizei o ChatGPT de forma consultiva ao longo do desenvolvimento, principalmente para discutir abordagens e revisar estrutura.
+
+A implementação foi feita manualmente, com validação e ajustes próprios sobre os outputs sugeridos.
+
+O uso de IA foi direcionado como apoio, sem substituir o julgamento técnico nas decisões de modelagem e arquitetura.
