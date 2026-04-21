@@ -207,14 +207,12 @@ Simula consumo downstream fora do BI.
 
 Foram implementados testes de qualidade de dados em dois níveis:
 
-**Testes genéricos:**
+**Testes genéricos (model_name.yml):**
 
 * `not_null`
 * `unique`
-* `relationships`
-* `accepted_values`
 
-**Teste customizado:**
+**Teste customizado (/tests):**
 
 * reservas canceladas não devem possuir check-in registrado
 
